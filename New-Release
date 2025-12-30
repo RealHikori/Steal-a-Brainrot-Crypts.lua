@@ -162,11 +162,60 @@ tween:Play()
 local startTime = tick()
 tween.Completed:Connect(function()
 	percentageLabel.Text = "100%"
-	-- After loading completes, slide the GUI up and destroy it
+	-- After loading completes, slide the GUI up and destroy it, then show initiation letter and load the script
 	local slideTween = TweenService:Create(background, TweenInfo.new(1, Enum.EasingStyle.Linear), {Position = UDim2.new(0, 0, -1, 0)})
 	slideTween:Play()
 	slideTween.Completed:Connect(function()
 		gui:Destroy()
+		
+		-- Create initiation letter GUI: "Loading the script..."
+		local initGui = Instance.new("ScreenGui")
+		initGui.Name = "InitScreen"
+		initGui.IgnoreGuiInset = true
+		initGui.Parent = game.Players.LocalPlayer.PlayerGui
+		
+		local initBackground = Instance.new("Frame")
+		initBackground.Size = UDim2.new(1, 0, 1, 0)
+		initBackground.Position = UDim2.new(0, 0, 0, 0)
+		initBackground.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- White background
+		initBackground.Parent = initGui
+		
+		local initLabel = Instance.new("TextLabel")
+		initLabel.Size = UDim2.new(0, 400, 0, 50)
+		initLabel.Position = UDim2.new(0.5, -200, 0.5, -25)
+		initLabel.BackgroundTransparency = 1
+		initLabel.Text = "Initiating Script..."
+		initLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+		initLabel.Font = Enum.Font.SourceSansBold
+		initLabel.TextScaled = true
+		initLabel.Parent = initBackground
+		
+		-- Wait a short time to simulate loading the script
+		wait(1)  -- Reduced wait time for faster transition
+		
+		-- Script slot: Replace the content inside the brackets with your loadstring code
+		local scriptCode = [[
+			-- Example: print("Hello, World!")
+			-- Replace this with your actual loadstring script code
+			loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/469095d9d52d9e123298c64aeb62005f.lua"))()
+		]]
+		
+		-- Execute the script using loadstring
+		local success, err = pcall(function()
+			loadstring(scriptCode)()
+		end)
+		
+		if success then
+			initLabel.Text = "Script Loaded Successfully! Thank You For Using Hikori's Script"
+		else
+			initLabel.Text = "Error loading script: " .. err
+		end
+		
+		-- Wait a bit to show the success/error message
+		wait(2)
+		
+		-- Destroy the initiation GUI after loading
+		initGui:Destroy()
 	end)
 end)
 
